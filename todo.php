@@ -25,6 +25,26 @@ function outputTasks($taskList)
         echo '完了日:' . $value['finished_at'] . PHP_EOL;
     }
 }
+// タスクのステータスの変更
+function changeStatus(&$taskList)
+{
+    outputTasks($taskList);
+    echo 'ステータスを変更するタスク番号を選択して下さい' . PHP_EOL;
+    $num = trim(fgets(STDIN));
+    $task = &$taskList[$num];
+    if (!empty($task)) {
+        if ($task['status'] === '未完了') {
+            $task['status'] = '完了';
+            $task['finished_at'] = date("Y-m-d H:i:s");
+        } else {
+            $task['status'] = '未完了';
+            $task['finished_at'] = '-';
+        }
+        echo 'タスクのステータスを更新しました' . PHP_EOL;
+    } else {
+        echo 'タスクが存在しません。再度選びなおして下さい' . PHP_EOL;
+    }
+}
 // メイン処理
 $taskList = [];
 while (true) {
@@ -42,6 +62,8 @@ while (true) {
         outputTasks($taskList);
     } elseif ($num === '4') {
         createTask($taskList);
+    } elseif ($num === '5') {
+        changeStatus($taskList);
     } else {
         break;
     }
