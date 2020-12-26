@@ -46,6 +46,7 @@ function changeStatus(&$taskList)
     }
 }
 
+// タスクを抽出して表示する
 function extTasks($taskList)
 {
     $extTaskList = [];
@@ -60,18 +61,36 @@ function extTasks($taskList)
             $extTaskList = array_filter($taskList, function ($task) {
                 return $task['status'] === '完了';
             });
+            break;
         case '2':
             $extTaskList = array_filter($taskList, function ($task) {
                 return $task['status'] === '未完了';
             });
+            break;
         case '3';
             echo '検索したいキーワードを入力して下さい' . PHP_EOL;
             $keyword = trim(fgets(STDIN));
             $extTaskList = array_filter($taskList, function ($task) use ($keyword) {
                 return strpos($task['content'], $keyword) === 0;
             });
+            break;
     }
     outputTasks($extTaskList);
+}
+
+// タスクの削除
+function deleteTask(&$taskList)
+{
+    outputTasks($taskList);
+    echo '削除したいタスク番号を入力して下さい' . PHP_EOL;
+    $number = (int) trim(fgets(STDIN));
+    if (count($taskList) - 1 >= $number) {
+        unset($taskList[$number]);
+        $taskList = array_values($taskList);
+        echo 'タスクを削除しました。' . PHP_EOL;
+    } else {
+        echo '存在しないタスク番号が選択されました。' . PHP_EOL;
+    }
 }
 // メイン処理
 // テスト用データー
@@ -107,6 +126,7 @@ while (true) {
     echo '2: タスクを抽出して表示する' . PHP_EOL;
     echo '3: タスクを登録する' . PHP_EOL;
     echo '4: タスクのステータスを変更' . PHP_EOL;
+    echo '5: タスクを削除' . PHP_EOL;
     echo '9: 終了' . PHP_EOL;
     echo '番号を選択して下さい(1,2,3,4,5,9) :';
     $num = trim(fgets(STDIN));
@@ -119,6 +139,8 @@ while (true) {
         createTask($taskList);
     } elseif ($num === '4') {
         changeStatus($taskList);
+    } elseif ($num === '5') {
+        deleteTask($taskList);
     } else {
         break;
     }
